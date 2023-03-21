@@ -3,10 +3,10 @@ function createElement(type, props, ...children) {
     type,
     props: {
       ...props,
-      children: children.map(child =>
+      children: children.map((child) =>
         typeof child === "object" ? child : createTextElement(child)
-      )
-    }
+      ),
+    },
   };
 }
 
@@ -15,8 +15,8 @@ function createTextElement(text) {
     type: "TEXT_ELEMENT",
     props: {
       nodeValue: text,
-      children: []
-    }
+      children: [],
+    },
   };
 }
 
@@ -31,16 +31,16 @@ function createDom(fiber) {
   return dom;
 }
 
-const isEvent = key => key.startsWith("on");
-const isProperty = key => key !== "children" && !isEvent(key);
-const isNew = (prev, next) => key => prev[key] !== next[key];
-const isGone = (prev, next) => key => !(key in next);
+const isEvent = (key) => key.startsWith("on");
+const isProperty = (key) => key !== "children" && !isEvent(key);
+const isNew = (prev, next) => (key) => prev[key] !== next[key];
+const isGone = (prev, next) => (key) => !(key in next);
 function updateDom(dom, prevProps, nextProps) {
   //Remove old or changed event listeners
   Object.keys(prevProps)
     .filter(isEvent)
-    .filter(key => !(key in nextProps) || isNew(prevProps, nextProps)(key))
-    .forEach(name => {
+    .filter((key) => !(key in nextProps) || isNew(prevProps, nextProps)(key))
+    .forEach((name) => {
       const eventType = name.toLowerCase().substring(2);
       dom.removeEventListener(eventType, prevProps[name]);
     });
@@ -49,7 +49,7 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(prevProps)
     .filter(isProperty)
     .filter(isGone(prevProps, nextProps))
-    .forEach(name => {
+    .forEach((name) => {
       dom[name] = "";
     });
 
@@ -57,7 +57,7 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(nextProps)
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
-    .forEach(name => {
+    .forEach((name) => {
       dom[name] = nextProps[name];
     });
 
@@ -65,7 +65,7 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(nextProps)
     .filter(isEvent)
     .filter(isNew(prevProps, nextProps))
-    .forEach(name => {
+    .forEach((name) => {
       const eventType = name.toLowerCase().substring(2);
       dom.addEventListener(eventType, nextProps[name]);
     });
@@ -113,9 +113,9 @@ function render(element, container) {
   wipRoot = {
     dom: container,
     props: {
-      children: [element]
+      children: [element],
     },
-    alternate: currentRoot
+    alternate: currentRoot,
   };
   deletions = [];
   nextUnitOfWork = wipRoot;
@@ -179,20 +179,20 @@ function useState(initial) {
     wipFiber.alternate.hooks[hookIndex];
   const hook = {
     state: oldHook ? oldHook.state : initial,
-    queue: []
+    queue: [],
   };
 
   const actions = oldHook ? oldHook.queue : [];
-  actions.forEach(action => {
+  actions.forEach((action) => {
     hook.state = action(hook.state);
   });
 
-  const setState = action => {
+  const setState = (action) => {
     hook.queue.push(action);
     wipRoot = {
       dom: currentRoot.dom,
       props: currentRoot.props,
-      alternate: currentRoot
+      alternate: currentRoot,
     };
     nextUnitOfWork = wipRoot;
     deletions = [];
@@ -228,7 +228,7 @@ function reconcileChildren(wipFiber, elements) {
         dom: oldFiber.dom,
         parent: wipFiber,
         alternate: oldFiber,
-        effectTag: "UPDATE"
+        effectTag: "UPDATE",
       };
     }
     if (element && !sameType) {
@@ -238,7 +238,7 @@ function reconcileChildren(wipFiber, elements) {
         dom: null,
         parent: wipFiber,
         alternate: null,
-        effectTag: "PLACEMENT"
+        effectTag: "PLACEMENT",
       };
     }
     if (oldFiber && !sameType) {
@@ -264,14 +264,14 @@ function reconcileChildren(wipFiber, elements) {
 const Didact = {
   createElement,
   render,
-  useState
+  useState,
 };
 
 /** @jsx Didact.createElement */
 function Counter() {
   const [state, setState] = Didact.useState(1);
   return (
-    <h1 onClick={() => setState(c => c + 1)} style="user-select: none">
+    <h1 onClick={() => setState((c) => c + 1)} style="user-select: none">
       Count: {state}
     </h1>
   );
@@ -279,4 +279,3 @@ function Counter() {
 const element = <Counter />;
 const container = document.getElementById("root");
 Didact.render(element, container);
-
