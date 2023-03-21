@@ -92,11 +92,11 @@ function commitWork(fiber) {
 
   const domParent = domParentFiber.dom;
 
-  if (fiber.effectTag === "PLACEMENT" && fiber.dom !== null) {
+  if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
     domParent.appendChild(fiber.dom);
   } else if (fiber.effectTag === "DELETION") {
     commitDeletion(fiber, domParent);
-  } else if (fiber.effectTag === "UPDATE" && fiber.dom !== null) {
+  } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate.props, fiber.props);
   }
   commitWork(fiber.child);
@@ -194,8 +194,8 @@ function useState(initial) {
     queue: [],
   };
 
-  const actoins = oldHook ? oldHook.queue : [];
-  actoins.forEach((action) => {
+  const actions = oldHook ? oldHook.queue : [];
+  actions.forEach((action) => {
     hook.state = action(hook.state);
   });
 
@@ -226,14 +226,15 @@ function updateHostComponent(fiber) {
 function reconcileChildren(wipFiber, elements) {
   let index = 0;
   let oldFiber = wipFiber.alternate && wipFiber.alternate.child;
+  console.log("🚀 ~ file: 8_hooks.jsx:229 ~ reconcileChildren ~ oldFiber:", oldFiber)
   let prevSibling = null;
 
   // create children's fiber
-  while (index < elements.length || oldFiber !== null) {
+  while (index < elements.length || oldFiber != null) {
     const element = elements[index];
 
     let newFiber = null;
-    const sameType = oldFiber && element && element.type === oldFiber.type;
+    const sameType = oldFiber && element && element.type == oldFiber.type;
 
     if (sameType) {
       // update the node
@@ -264,7 +265,7 @@ function reconcileChildren(wipFiber, elements) {
     }
 
     if (oldFiber) {
-      oldFiber = oldFiber.silbing;
+      oldFiber = oldFiber.sibling;
     }
 
     if (index === 0) {
